@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.oauth.domain.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.hand.oauth.domain.model.User">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+  </resultMap>
+
+  <!--自定义查询，多表查询返回结果封装-->
+  <resultMap id="UserDetailsResultMap" type="com.hand.oauth.domain.dto.UserDetailsVO">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+
+    <!--账号信息-->
+    <result column="account_id" jdbcType="INTEGER" property="accountId" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+
+
+    <!--租户信息-->
+    <association property="tenant" javaType="com.hand.oauth.domain.model.Tenant">
+      <id column="tenant_id" jdbcType="INTEGER" property="tenantId" />
+      <result column="domain" jdbcType="VARCHAR" property="domain" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="login_provider" jdbcType="VARCHAR" property="loginProvider" />
+      <result column="login_type" jdbcType="VARCHAR" property="loginType" />
+    </association>
+
+
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    user_id, username, phone, email
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from oauth_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from oauth_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.hand.oauth.domain.model.User">
+    insert into oauth_user (user_id, username, phone, 
+      email)
+    values (#{userId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hand.oauth.domain.model.User">
+    insert into oauth_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hand.oauth.domain.model.User">
+    update oauth_user
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hand.oauth.domain.model.User">
+    update oauth_user
+    set username = #{username,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <!--定制查询-->
+  <select id="selectByUsername" parameterType="java.lang.String" resultMap="UserDetailsResultMap">
+    SELECT
+      user.user_id , user.username , user.phone , user.email ,
+      account.account_id , account.password ,
+      tenant.tenant_id , tenant.domain , tenant.name , tenant.login_provider , tenant.login_type
+    from oauth_user user
+    left join oauth_account account on user.user_id = account.user_id
+    left join oauth_tenant tenant on account.tenant_id = tenant.tenant_id
+    where username= #{username,jdbcType=VARCHAR};
+  </select>
+
+  <!--定制查询-->
+  <select id="selectByPhone" parameterType="java.lang.String" resultMap="UserDetailsResultMap">
+    SELECT
+      user.user_id , user.username , user.phone , user.email ,
+      account.account_id , account.password ,
+      tenant.tenant_id , tenant.domain , tenant.name , tenant.login_provider , tenant.login_type
+    from oauth_user user
+    left join oauth_account account on user.user_id = account.user_id
+    left join oauth_tenant tenant on account.tenant_id = tenant.tenant_id
+    where phone= #{phone,jdbcType=VARCHAR};
+  </select>
+
+  <!--定制查询-->
+  <select id="selectByEmail" parameterType="java.lang.String" resultMap="UserDetailsResultMap">
+    SELECT
+      user.user_id , user.username , user.phone , user.email ,
+      account.account_id , account.password ,
+      tenant.tenant_id , tenant.domain , tenant.name , tenant.login_provider , tenant.login_type
+    from oauth_user user
+    left join oauth_account account on user.user_id = account.user_id
+    left join oauth_tenant tenant on account.tenant_id = tenant.tenant_id
+    where email= #{email,jdbcType=VARCHAR};
+  </select>
+</mapper>

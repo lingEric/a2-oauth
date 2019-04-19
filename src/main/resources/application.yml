@@ -1,0 +1,39 @@
+server:
+  port: 8083
+
+
+spring:
+  redis:
+    host: 127.0.0.1
+    database: 0
+
+
+  datasource:
+    name: test
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/srm-aurora2?useUnicode=true&characterEncoding=utf-8&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=GMT%2B8
+      username: root
+      password: root
+
+  security:
+    filter:
+      order: 3
+
+logging.level.org.springframework.security: debug
+logging.level.web: debug
+
+
+
+## 该配置节点为独立的节点，有很多同学容易将这个配置放在spring的节点下，导致配置无法被识别
+mybatis:
+  mapper-locations: classpath:mapper/*.xml  #注意：一定要对应mapper映射xml文件的所在路径
+  type-aliases-package: com.hand.oauth.domain.model  # 注意：对应实体类的路径
+
+#pagehelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

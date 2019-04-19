@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.oauth.domain.mapper.TenantMapper">
+  <resultMap id="BaseResultMap" type="com.hand.oauth.domain.model.Tenant">
+    <id column="tenant_id" jdbcType="INTEGER" property="tenantId" />
+    <result column="domain" jdbcType="VARCHAR" property="domain" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="login_provider" jdbcType="VARCHAR" property="loginProvider" />
+    <result column="login_type" jdbcType="VARCHAR" property="loginType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    tenant_id, domain, name, login_provider, login_type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from oauth_tenant
+    where tenant_id = #{tenantId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from oauth_tenant
+    where tenant_id = #{tenantId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.hand.oauth.domain.model.Tenant">
+    insert into oauth_tenant (tenant_id, domain, name, 
+      login_provider, login_type)
+    values (#{tenantId,jdbcType=INTEGER}, #{domain,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{loginProvider,jdbcType=VARCHAR}, #{loginType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hand.oauth.domain.model.Tenant">
+    insert into oauth_tenant
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tenantId != null">
+        tenant_id,
+      </if>
+      <if test="domain != null">
+        domain,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="loginProvider != null">
+        login_provider,
+      </if>
+      <if test="loginType != null">
+        login_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tenantId != null">
+        #{tenantId,jdbcType=INTEGER},
+      </if>
+      <if test="domain != null">
+        #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="loginProvider != null">
+        #{loginProvider,jdbcType=VARCHAR},
+      </if>
+      <if test="loginType != null">
+        #{loginType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hand.oauth.domain.model.Tenant">
+    update oauth_tenant
+    <set>
+      <if test="domain != null">
+        domain = #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="loginProvider != null">
+        login_provider = #{loginProvider,jdbcType=VARCHAR},
+      </if>
+      <if test="loginType != null">
+        login_type = #{loginType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where tenant_id = #{tenantId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hand.oauth.domain.model.Tenant">
+    update oauth_tenant
+    set domain = #{domain,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      login_provider = #{loginProvider,jdbcType=VARCHAR},
+      login_type = #{loginType,jdbcType=VARCHAR}
+    where tenant_id = #{tenantId,jdbcType=INTEGER}
+  </update>
+
+  <!--自定义查询-->
+  <select id="selectByDomain" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from oauth_tenant
+    where oauth_tenant.domain = #{domain,jdbcType=VARCHAR}
+  </select>
+</mapper>

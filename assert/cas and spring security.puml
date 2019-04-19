@@ -1,0 +1,43 @@
+@startuml
+Browser -> Oauth: GET /hello 访问受限资源
+
+activate Oauth
+Oauth --> Oauth: 用户未登录，FilterSecurityInterceptor抛出异常
+
+Oauth --> Oauth: ExceptionTranslationFilter对异常处理，保存当前请求
+note right of Oauth
+ handleSpringSecurityException方法对异常进行处理
+ 如果是AuthenticationException，跳转到sendStartAuthentication
+    sendStartAuthentication保存当前请求，发起用户认证
+ 如果是AccessDeniedException，
+    且用户不是匿名身份，accessDeniedHandler做出响应
+end note
+
+Oauth --> Browser: GET /cas/login?service=xxx
+
+Browser --> Cas: GET /cas/login?service=xxx
+Cas -->Browser: please login in
+
+Browser --> Cas:用户登录成功
+Cas --> Oauth:跳转到端点/login/cas【此端点可配置】，并带上service ticket
+
+
+note right of Oauth
+    /login/cas?ticket=ST-xxx请求没有被spring security的过滤器链拦截，创建匿名用户
+    最后被CasAuthenticationFilter过滤器拦截
+end note
+
+
+Oauth --> Oauth: CasAuthenticationProvider进行用户认证
+
+note right of Oauth
+final Assertion assertion = this.ticketValidator.validate(authentication.getCredentials().toString(), getServiceUrl(authentication));
+final UserDetails userDetails = loadUserByAssertion(assertion);
+userDetailsChecker.check(userDetails);
+return new CasAuthenticationToken(this.key, userDetails,authentication.getCredentials(),authoritiesMapper.mapAuthorities(userDetails.getAuthorities()),userDetails, assertion);
+end note
+
+return /hello
+
+
+@enduml

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.oauth.domain.mapper.CasInfoMapper">
+  <resultMap id="BaseResultMap" type="com.hand.oauth.domain.model.CasInfo">
+    <id column="cas_id" jdbcType="INTEGER" property="casId" />
+    <result column="tenant_id" jdbcType="INTEGER" property="tenantId" />
+    <result column="cas_server" jdbcType="VARCHAR" property="casServer" />
+    <result column="cas_server_login" jdbcType="VARCHAR" property="casServerLogin" />
+    <result column="cas_server_logout" jdbcType="VARCHAR" property="casServerLogout" />
+    <result column="cas_service" jdbcType="VARCHAR" property="casService" />
+    <result column="cas_service_logout" jdbcType="VARCHAR" property="casServiceLogout" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    cas_id, tenant_id, cas_server, cas_server_login, cas_server_logout, cas_service, 
+    cas_service_logout
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from oauth_cas_info
+    where cas_id = #{casId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from oauth_cas_info
+    where cas_id = #{casId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.hand.oauth.domain.model.CasInfo">
+    insert into oauth_cas_info (cas_id, tenant_id, cas_server, 
+      cas_server_login, cas_server_logout, cas_service, 
+      cas_service_logout)
+    values (#{casId,jdbcType=INTEGER}, #{tenantId,jdbcType=INTEGER}, #{casServer,jdbcType=VARCHAR}, 
+      #{casServerLogin,jdbcType=VARCHAR}, #{casServerLogout,jdbcType=VARCHAR}, #{casService,jdbcType=VARCHAR}, 
+      #{casServiceLogout,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hand.oauth.domain.model.CasInfo">
+    insert into oauth_cas_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="casId != null">
+        cas_id,
+      </if>
+      <if test="tenantId != null">
+        tenant_id,
+      </if>
+      <if test="casServer != null">
+        cas_server,
+      </if>
+      <if test="casServerLogin != null">
+        cas_server_login,
+      </if>
+      <if test="casServerLogout != null">
+        cas_server_logout,
+      </if>
+      <if test="casService != null">
+        cas_service,
+      </if>
+      <if test="casServiceLogout != null">
+        cas_service_logout,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="casId != null">
+        #{casId,jdbcType=INTEGER},
+      </if>
+      <if test="tenantId != null">
+        #{tenantId,jdbcType=INTEGER},
+      </if>
+      <if test="casServer != null">
+        #{casServer,jdbcType=VARCHAR},
+      </if>
+      <if test="casServerLogin != null">
+        #{casServerLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="casServerLogout != null">
+        #{casServerLogout,jdbcType=VARCHAR},
+      </if>
+      <if test="casService != null">
+        #{casService,jdbcType=VARCHAR},
+      </if>
+      <if test="casServiceLogout != null">
+        #{casServiceLogout,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hand.oauth.domain.model.CasInfo">
+    update oauth_cas_info
+    <set>
+      <if test="tenantId != null">
+        tenant_id = #{tenantId,jdbcType=INTEGER},
+      </if>
+      <if test="casServer != null">
+        cas_server = #{casServer,jdbcType=VARCHAR},
+      </if>
+      <if test="casServerLogin != null">
+        cas_server_login = #{casServerLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="casServerLogout != null">
+        cas_server_logout = #{casServerLogout,jdbcType=VARCHAR},
+      </if>
+      <if test="casService != null">
+        cas_service = #{casService,jdbcType=VARCHAR},
+      </if>
+      <if test="casServiceLogout != null">
+        cas_service_logout = #{casServiceLogout,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where cas_id = #{casId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hand.oauth.domain.model.CasInfo">
+    update oauth_cas_info
+    set tenant_id = #{tenantId,jdbcType=INTEGER},
+      cas_server = #{casServer,jdbcType=VARCHAR},
+      cas_server_login = #{casServerLogin,jdbcType=VARCHAR},
+      cas_server_logout = #{casServerLogout,jdbcType=VARCHAR},
+      cas_service = #{casService,jdbcType=VARCHAR},
+      cas_service_logout = #{casServiceLogout,jdbcType=VARCHAR}
+    where cas_id = #{casId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByTenantId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from oauth_cas_info
+    where tenant_id = #{tenantId,jdbcType=INTEGER}
+  </select>
+</mapper>
